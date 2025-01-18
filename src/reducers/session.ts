@@ -31,7 +31,7 @@ export const sessionSlice = createSlice({
         appId: string;
         nodePort: number;
         windowPort: number;
-      }>,
+      }>
     ) => {
       state[sessionId] = { ...rest, page: {}, log: "" };
     },
@@ -48,7 +48,7 @@ export const sessionSlice = createSlice({
       state,
       {
         payload: { sessionId, content },
-      }: PayloadAction<{ sessionId: string; content: string }>,
+      }: PayloadAction<{ sessionId: string; content: string }>
     ) => {
       const selected = state[sessionId];
       if (selected) selected.log += content;

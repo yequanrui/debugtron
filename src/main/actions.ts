@@ -12,10 +12,10 @@ import type { State } from "./store";
 
 type ThunkActionCreator<P1 = void, P2 = void> = (
   p1: P1,
-  p2: P2,
+  p2: P2
 ) => (
   dispatch: ThunkDispatch<State, never, any>,
-  getState: () => State,
+  getState: () => State
 ) => void;
 
 export const init: ThunkActionCreator = () => async (dispatch, getState) => {
@@ -33,11 +33,13 @@ export const init: ThunkActionCreator = () => async (dispatch, getState) => {
     const ports = sessions.flatMap((s) => [s.nodePort, s.windowPort]);
 
     const responses = await Promise.allSettled<PageInfo[]>(
-      ports.map((port) => fetch(`http://127.0.0.1:${port}/json`).then((res) => res.json())),
+      ports.map((port) =>
+        fetch(`http://127.0.0.1:${port}/json`).then((res) => res.json())
+      )
     );
     const pagess = chunk(
       responses.map((p) => (p.status === "fulfilled" ? p.value : [])),
-      2,
+      2
     ).map((item) => item.flat());
     console.log(ports, pagess);
 
@@ -58,7 +60,7 @@ export const debug: ThunkActionCreator<AppInfo> = (app) => async (dispatch) => {
     ],
     {
       cwd: process.platform === "win32" ? path.dirname(app.exePath) : "/",
-    },
+    }
   );
 
   const sessionId = v4();
@@ -68,7 +70,7 @@ export const debug: ThunkActionCreator<AppInfo> = (app) => async (dispatch) => {
       appId: app.id,
       nodePort,
       windowPort,
-    }),
+    })
   );
 
   sp.on("error", (err) => {
@@ -79,15 +81,17 @@ export const debug: ThunkActionCreator<AppInfo> = (app) => async (dispatch) => {
     dispatch(sessionSlice.actions.removed(sessionId));
   });
 
-  const handleStdout = (isError = false) => (chunk: Buffer) => {
-    // TODO: stderr colors
-    dispatch(
-      sessionSlice.actions.logAppended({
-        sessionId,
-        content: chunk.toString(),
-      }),
-    );
-  };
+  const handleStdout =
+    (isError = false) =>
+    (chunk: Buffer) => {
+      // TODO: stderr colors
+      dispatch(
+        sessionSlice.actions.logAppended({
+          sessionId,
+          content: chunk.toString(),
+        })
+      );
+    };
 
   if (sp.stdout) {
     sp.stdout.on("data", handleStdout());
@@ -97,6 +101,7 @@ export const debug: ThunkActionCreator<AppInfo> = (app) => async (dispatch) => {
   }
 };
 
-export const debugPath: ThunkActionCreator<string> = (path) => async (dispatch) => {
-  // TODO:
-};
+export const debugPath: ThunkActionCreator<string> =
+  (path) => async (dispatch) => {
+    // TODO:
+  };
